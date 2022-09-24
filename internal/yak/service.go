@@ -8,7 +8,9 @@ type Service struct {
 	herd []models.Yak // In a real scenario it would be a data store
 }
 
-func NewService(herd []models.Yak) *Service {
+func NewService(yakImport []models.YakImport) *Service {
+	herd := toHerd(yakImport)
+
 	return &Service{herd: herd}
 }
 
@@ -37,4 +39,19 @@ func (s *Service) Process(day int) (float32, int) {
 	}
 
 	return totalMilk, totalWool
+}
+
+func toHerd(imports []models.YakImport) []models.Yak {
+	result := make([]models.Yak, len(imports))
+
+	for i := 0; i < len(imports); i++ {
+		result[i] = models.Yak{
+			Name:      imports[i].Name,
+			AgeInDays: int(imports[i].Age * 100),
+			Sex:       imports[i].Sex,
+			Dead:      false,
+		}
+	}
+
+	return result
 }
