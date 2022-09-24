@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/xml"
+	"flag"
 	"log"
 	"os"
 
@@ -10,8 +11,14 @@ import (
 	"github.com/tiagocesar/yak-shop/internal/yak"
 )
 
+const defaultFilePath = "./herd-sample.xml"
+
 func main() {
-	file, err := os.ReadFile("./herd-sample.xml")
+	filepath := flag.String("file", defaultFilePath, "The file path for the XML path with herd info")
+
+	flag.Parse()
+
+	file, err := os.ReadFile(*filepath)
 	if err != nil {
 		log.Fatal(err)
 	}
