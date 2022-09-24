@@ -26,7 +26,8 @@ func (s *Service) Process(day int) (float32, int) {
 	var totalWool int
 
 	// Making a copy so the original data is preserved
-	herd := s.herd
+	herd := make([]models.Yak, len(s.herd))
+	copy(herd, s.herd)
 
 	for i := range herd {
 		yak := &herd[i]
@@ -56,7 +57,8 @@ func (s *Service) GetHerdInfo(day int) []models.Yak {
 	}
 
 	// Making a copy so the original data is preserved
-	herd := s.herd
+	herd := make([]models.Yak, len(s.herd))
+	copy(herd, s.herd)
 
 	for i := range herd {
 		yak := &herd[i]
