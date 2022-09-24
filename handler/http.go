@@ -9,10 +9,13 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+
+	"github.com/tiagocesar/yak-shop/internal/models"
 )
 
 type yakProcessor interface {
 	Process(day int) (float32, int)
+	GetHerdInfo(day int) []models.Yak
 }
 
 type httpServer struct {
@@ -29,7 +32,7 @@ func (h *httpServer) ConfigureAndServe(port string) {
 	router.Use(middleware.StripSlashes)
 
 	router.Get("/yak-shop/stock/{day}", h.stockHandler)
-	router.Get("/yak-shop/herd/{day}", nil)
+	router.Get("/yak-shop/herd/{day}", h.herdHandler)
 	router.Post("/yak-shop/order/{day}", nil)
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), router); err != nil {
@@ -56,6 +59,26 @@ func (h *httpServer) stockHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	j, _ := json.Marshal(response)
+
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(j)
+}
+
+// herdHandler returns information about the herd
+func (h *httpServer) herdHandler(w http.ResponseWriter, r *http.Request) {
+	d := chi.URLParam(r, "day")
+
+	day, err := strconv.ParseInt(d, 10, 32)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte(("Invalid day")))
+		return
+	}
+
+	response := h.yakService.GetHerdInfo(int(day))
+	herd := toHerdHandlerResponse(response)
+
+	j, _ := json.Marshal(herd)
 
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(j)

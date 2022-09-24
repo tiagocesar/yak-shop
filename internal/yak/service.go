@@ -46,6 +46,33 @@ func (s *Service) Process(day int) (float32, int) {
 	return totalMilk, totalWool
 }
 
+// GetHerdInfo does a "dry run" over the herd, ageing it
+// and getting the information of the state after the specified
+// days period has passed.
+func (s *Service) GetHerdInfo(day int) []models.Yak {
+	if day > models.MaxYakAge {
+		// adjusting to the maximum possible age for a yak to be alive
+		day = models.MaxYakAge
+	}
+
+	// Making a copy so the original data is preserved
+	herd := s.herd
+
+	for i := range herd {
+		yak := &herd[i]
+
+		for i := 0; i < day; i++ {
+			if yak.Dead {
+				break
+			}
+
+			yak.Age()
+		}
+	}
+
+	return herd
+}
+
 // toHerd converts from the format used to import the input file
 // to a format we can work with internally
 func toHerd(imports []models.YakImport) []models.Yak {
