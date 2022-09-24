@@ -25,8 +25,11 @@ func (s *Service) Process(day int) (float32, int) {
 	var totalMilk float32
 	var totalWool int
 
-	for i := range s.herd {
-		yak := &s.herd[i]
+	// Making a copy so the original data is preserved
+	herd := s.herd
+
+	for i := range herd {
+		yak := &herd[i]
 
 		for i := 0; i < day; i++ {
 			if yak.Dead {
