@@ -10,8 +10,9 @@ type stockHandlerResponse struct {
 }
 
 type herdHandlerResponse struct {
-	Name string  `json:"name"`
-	Age  float32 `json:"age"`
+	Name          string  `json:"name"`
+	Age           float32 `json:"age"`
+	AgeLastShaved float32 `json:"age-last-shaved"`
 }
 
 func toHerdHandlerResponse(herd []models.Yak) []herdHandlerResponse {
@@ -19,8 +20,9 @@ func toHerdHandlerResponse(herd []models.Yak) []herdHandlerResponse {
 
 	for i := range herd {
 		result[i] = herdHandlerResponse{
-			Name: herd[i].Name,
-			Age:  float32(herd[i].AgeInDays) / 100,
+			Name:          herd[i].Name,
+			Age:           float32(herd[i].AgeInDays) / 100,
+			AgeLastShaved: float32(herd[i].AgeLastShaved) / 100,
 		}
 	}
 

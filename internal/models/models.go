@@ -16,11 +16,12 @@ type YakImport struct {
 }
 
 type Yak struct {
-	Name      string
-	AgeInDays int
-	Sex       string
-	Dead      bool
-	NextShave int
+	Name          string
+	AgeInDays     int
+	Sex           string
+	Dead          bool
+	AgeLastShaved int
+	NextShave     int
 }
 
 func (yak *Yak) Milk() float32 {
@@ -31,6 +32,7 @@ func (yak *Yak) Milk() float32 {
 
 func (yak *Yak) Shave(day int) int {
 	if yak.AgeInDays >= MinShavingAge && yak.NextShave < day {
+		yak.AgeLastShaved = yak.AgeInDays
 		yak.NextShave = 8 + int(float32(yak.AgeInDays)*0.01)
 
 		return 1

@@ -66,6 +66,9 @@ func (s *Service) GetHerdInfo(day int) []models.Yak {
 				break
 			}
 
+			// We simulate shaving the yak because we want to know when it was last shaved
+			yak.Shave(i)
+
 			yak.Age()
 		}
 	}
