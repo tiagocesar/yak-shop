@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"fmt"
+
 	"github.com/tiagocesar/yak-shop/internal/models"
 )
 
@@ -10,19 +12,22 @@ type stockHandlerResponse struct {
 }
 
 type herdHandlerResponse struct {
-	Name          string  `json:"name"`
-	Age           float32 `json:"age"`
-	AgeLastShaved float32 `json:"age-last-shaved"`
+	Name          string `json:"name"`
+	Age           string `json:"age"`
+	AgeLastShaved string `json:"age-last-shaved"`
 }
 
 func toHerdHandlerResponse(herd []models.Yak) []herdHandlerResponse {
 	result := make([]herdHandlerResponse, len(herd))
 
 	for i := range herd {
+		age := float32(herd[i].AgeInDays) / 100
+		lastShaved := float32(herd[i].AgeLastShaved) / 100
+
 		result[i] = herdHandlerResponse{
 			Name:          herd[i].Name,
-			Age:           float32(herd[i].AgeInDays) / 100,
-			AgeLastShaved: float32(herd[i].AgeLastShaved) / 100,
+			Age:           fmt.Sprintf("%v", age),
+			AgeLastShaved: fmt.Sprintf("%.1f", lastShaved),
 		}
 	}
 
