@@ -14,6 +14,8 @@ func NewService(yakImport []models.YakImport) *Service {
 	return &Service{herd: herd}
 }
 
+// Process does the ageing of herd while
+// processing the production of milk and wool
 func (s *Service) Process(day int) (float32, int) {
 	if day > models.MaxYakAge {
 		// adjusting to the maximum possible age for a yak to be alive
@@ -41,6 +43,8 @@ func (s *Service) Process(day int) (float32, int) {
 	return totalMilk, totalWool
 }
 
+// toHerd converts from the format used to import the input file
+// to a format we can work with internally
 func toHerd(imports []models.YakImport) []models.Yak {
 	result := make([]models.Yak, len(imports))
 
