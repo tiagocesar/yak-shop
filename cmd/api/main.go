@@ -9,11 +9,6 @@ import (
 	"github.com/tiagocesar/yak-shop/internal/models"
 )
 
-const (
-	minShavingAge = 101
-	maxAge        = 1000
-)
-
 func main() {
 	file, err := os.ReadFile("./herd-sample.xml")
 	if err != nil {
@@ -28,7 +23,7 @@ func main() {
 
 	herd := toHerd(w.Yaks)
 
-	currentDay := 14 // Should be sanitized to not go above 1.000
+	currentDay := 13 // Should be sanitized to not go above 1.000
 	var totalMilk float32
 	var totalWool int
 
@@ -40,25 +35,9 @@ func main() {
 				break
 			}
 
-			// Milk
-			producedMilk := 50 - (float32(yak.AgeInDays) * 0.03)
-
-			if producedMilk > 0 {
-				totalMilk += producedMilk
-			}
-
-			// Wool
-			if yak.AgeInDays >= minShavingAge && yak.NextShave < day {
-				totalWool++
-
-				yak.NextShave = 8 + int(float32(yak.AgeInDays)*0.01)
-			}
-
-			// Ageing
-			yak.AgeInDays += 1
-			if yak.AgeInDays >= maxAge {
-				yak.Dead = true
-			}
+			totalMilk += yak.Milk()
+			totalWool += yak.Shave(day)
+			yak.Age()
 		}
 	}
 
