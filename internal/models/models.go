@@ -1,11 +1,19 @@
 package models
 
-type Herd struct {
-	Yaks []Yak `xml:"labyak"`
+type WrapperImport struct {
+	Yaks []YakImport `xml:"labyak"`
 }
 
-type Yak struct {
+type YakImport struct {
 	Name string  `xml:"name,attr"`
 	Age  float32 `xml:"age,attr"`
 	Sex  string  `xml:"sex,attr"`
+}
+
+type Yak struct {
+	Name      string
+	AgeInDays int
+	Sex       string
+	Dead      bool
+	NextShave int
 }
