@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,7 +10,7 @@ import (
 )
 
 type yakProcessor interface {
-	Process(ctx context.Context, day int) (int, int, error)
+	Process(day int) (float32, int)
 }
 
 type httpServer struct {
