@@ -15,7 +15,6 @@ import (
 
 type yakProcessor interface {
 	Process(day int) ([]models.Yak, float32, int)
-	GetHerdInfo(day int) []models.Yak
 }
 
 type httpServer struct {
