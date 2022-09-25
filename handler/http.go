@@ -14,7 +14,7 @@ import (
 )
 
 type yakProcessor interface {
-	Process(day int) (float32, int)
+	Process(day int) ([]models.Yak, float32, int)
 	GetHerdInfo(day int) []models.Yak
 }
 
@@ -51,7 +51,7 @@ func (h *httpServer) stockHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	totalMilk, totalWool := h.yakService.Process(int(day))
+	_, totalMilk, totalWool := h.yakService.Process(int(day))
 
 	response := &stockHandlerResponse{
 		Milk:  totalMilk,
@@ -75,7 +75,7 @@ func (h *httpServer) herdHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := h.yakService.GetHerdInfo(int(day))
+	response, _, _ := h.yakService.Process(int(day))
 	herd := toHerdHandlerResponse(response)
 
 	j, _ := json.Marshal(herd)
