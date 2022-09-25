@@ -83,6 +83,10 @@ func (h *HttpServer) herdHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(j)
 }
 
+// orderHandler allows customers to place orders against our available stock.
+// Orders are only processed if the entirety of each product is available
+// according to the quantities specified by the customer.
+// Partial order processing is possible.
 func (h *HttpServer) orderHandler(w http.ResponseWriter, r *http.Request) {
 	d := chi.URLParam(r, "day")
 
