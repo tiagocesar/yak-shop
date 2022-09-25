@@ -119,14 +119,17 @@ func (h *HttpServer) orderHandler(w http.ResponseWriter, r *http.Request) {
 	var orderedMilk float32
 	var orderedSkins int
 
-	switch {
-	case orderRequest.Order.Milk <= totalMilk:
+	if orderRequest.Order.Milk <= totalMilk {
 		statusCode = http.StatusPartialContent
 		orderedMilk = orderRequest.Order.Milk
-	case orderRequest.Order.Skins <= totalWool:
+	}
+	if orderRequest.Order.Skins <= totalWool {
 		statusCode = http.StatusPartialContent
 		orderedSkins = orderRequest.Order.Skins
-	case orderedMilk > 0 && orderedSkins > 0: // Checking if both orders are fulfilled
+	}
+
+	// Checking if orders are fulfilled
+	if orderedMilk > 0 && orderedSkins > 0 {
 		statusCode = http.StatusCreated
 	}
 
