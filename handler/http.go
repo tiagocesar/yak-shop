@@ -118,18 +118,15 @@ func (h *httpServer) orderHandler(w http.ResponseWriter, r *http.Request) {
 	statusCode := http.StatusNotFound
 	var orderedMilk float32
 	var orderedSkins int
-	if orderRequest.Order.Milk <= totalMilk {
+
+	switch {
+	case orderRequest.Order.Milk <= totalMilk:
 		statusCode = http.StatusPartialContent
 		orderedMilk = orderRequest.Order.Milk
-	}
-
-	if orderRequest.Order.Skins <= totalWool {
+	case orderRequest.Order.Skins <= totalWool:
 		statusCode = http.StatusPartialContent
 		orderedSkins = orderRequest.Order.Skins
-	}
-
-	// Checking if both orders are fulfilled
-	if orderedMilk > 0 && orderedSkins > 0 {
+	case orderedMilk > 0 && orderedSkins > 0: // Checking if both orders are fulfilled
 		statusCode = http.StatusCreated
 	}
 
