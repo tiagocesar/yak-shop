@@ -17,15 +17,15 @@ type yakProcessor interface {
 	Process(day int) ([]models.Yak, float32, int)
 }
 
-type httpServer struct {
+type HttpServer struct {
 	yakService yakProcessor
 }
 
-func NewHttpServer(yakService yakProcessor) *httpServer {
-	return &httpServer{yakService: yakService}
+func NewHttpServer(yakService yakProcessor) *HttpServer {
+	return &HttpServer{yakService: yakService}
 }
 
-func (h *httpServer) ConfigureAndServe(port string) {
+func (h *HttpServer) ConfigureAndServe(port string) {
 	router := chi.NewRouter()
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.StripSlashes)
@@ -40,7 +40,7 @@ func (h *httpServer) ConfigureAndServe(port string) {
 }
 
 // stockHandler returns a stock representation for the specified day in the request
-func (h *httpServer) stockHandler(w http.ResponseWriter, r *http.Request) {
+func (h *HttpServer) stockHandler(w http.ResponseWriter, r *http.Request) {
 	d := chi.URLParam(r, "day")
 
 	day, err := strconv.ParseInt(d, 10, 32)
@@ -64,7 +64,7 @@ func (h *httpServer) stockHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // herdHandler returns information about the herd
-func (h *httpServer) herdHandler(w http.ResponseWriter, r *http.Request) {
+func (h *HttpServer) herdHandler(w http.ResponseWriter, r *http.Request) {
 	d := chi.URLParam(r, "day")
 
 	day, err := strconv.ParseInt(d, 10, 32)
@@ -83,7 +83,7 @@ func (h *httpServer) herdHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(j)
 }
 
-func (h *httpServer) orderHandler(w http.ResponseWriter, r *http.Request) {
+func (h *HttpServer) orderHandler(w http.ResponseWriter, r *http.Request) {
 	d := chi.URLParam(r, "day")
 
 	day, err := strconv.ParseInt(d, 10, 32)
