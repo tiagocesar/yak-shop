@@ -32,7 +32,7 @@ func (h *httpServer) ConfigureAndServe(port string) {
 
 	router.Get("/yak-shop/stock/{day}", h.stockHandler)
 	router.Get("/yak-shop/herd/{day}", h.herdHandler)
-	router.Post("/yak-shop/order/{day}", nil)
+	router.Post("/yak-shop/order/{day}", h.orderHandler)
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), router); err != nil {
 		log.Fatalf("Failed to start HTTP server")
@@ -80,5 +80,59 @@ func (h *httpServer) herdHandler(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(herd)
 
 	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(j)
+}
+
+func (h *httpServer) orderHandler(w http.ResponseWriter, r *http.Request) {
+	d := chi.URLParam(r, "day")
+
+	day, err := strconv.ParseInt(d, 10, 32)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte(("Invalid day")))
+		return
+	}
+
+	// Parsing the request body
+	var orderRequest orderHandlerRequest
+	err = json.NewDecoder(r.Body).Decode(&orderRequest)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	_, totalMilk, totalWool := h.yakService.Process(int(day))
+
+	// Establishing what status code to return:
+	//
+	// 404 - there's no quantity to fulfill the order of either goods
+	// 206 - there's one or another good in a quantity that fulfills part of the order
+	// 201 - there's enough goods to fulfill the entire order
+	statusCode := http.StatusNotFound
+	var orderedMilk float32
+	var orderedSkins int
+	if orderRequest.Order.Milk <= totalMilk {
+		statusCode = http.StatusPartialContent
+		orderedMilk = orderRequest.Order.Milk
+	}
+
+	if orderRequest.Order.Skins <= totalWool {
+		statusCode = http.StatusPartialContent
+		orderedSkins = orderRequest.Order.Skins
+	}
+
+	// Checking if both orders are fulfilled
+	if orderedMilk > 0 && orderedSkins > 0 {
+		statusCode = http.StatusCreated
+	}
+
+	orderResponse := orderHandlerResponse{
+		Milk:  orderedMilk,
+		Skins: orderedSkins,
+	}
+
+	j, _ := json.Marshal(orderResponse)
+
+	w.WriteHeader(statusCode)
 	_, _ = w.Write(j)
 }

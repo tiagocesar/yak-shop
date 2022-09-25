@@ -33,3 +33,16 @@ func toHerdHandlerResponse(herd []models.Yak) []herdHandlerResponse {
 
 	return result
 }
+
+type orderHandlerRequest struct {
+	Customer string `json:"customer"`
+	Order    struct {
+		Milk  float32 `json:"milk"`
+		Skins int     `json:"skins"`
+	} `json:"order"`
+}
+
+type orderHandlerResponse struct {
+	Milk  float32 `json:"milk,omitempty"`
+	Skins int     `json:"skins,omitempty"`
+}
