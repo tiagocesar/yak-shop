@@ -101,6 +101,13 @@ func (h *httpServer) orderHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Validating the request
+	if err = orderRequest.validate(); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+
 	_, totalMilk, totalWool := h.yakService.Process(int(day))
 
 	// Establishing what status code to return:

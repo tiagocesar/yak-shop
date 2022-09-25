@@ -1,9 +1,15 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/tiagocesar/yak-shop/internal/models"
+)
+
+var (
+	ErrCustomerNotSpecified = errors.New("please specify a customer")
+	ErrNoGoodsSpecified     = errors.New("please specify at least a valid item for the order")
 )
 
 type stockHandlerResponse struct {
@@ -40,6 +46,18 @@ type orderHandlerRequest struct {
 		Milk  float32 `json:"milk"`
 		Skins int     `json:"skins"`
 	} `json:"order"`
+}
+
+func (o orderHandlerRequest) validate() error {
+	if o.Customer == "" {
+		return ErrCustomerNotSpecified
+	}
+
+	if o.Order.Milk == 0 && o.Order.Skins == 0 {
+		return ErrNoGoodsSpecified
+	}
+
+	return nil
 }
 
 type orderHandlerResponse struct {
